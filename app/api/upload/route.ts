@@ -1,6 +1,4 @@
-import calculateRoleScore from "@/lib/calculateScore";
-import { parseHTML } from "@/lib/parseHTML";
-import { TableData } from "@/lib/types";
+import { put } from "@vercel/blob";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
@@ -13,12 +11,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false });
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  const blob = await put(file.name, data, {
+    access: "public",
+  });
 
-  const root = process.cwd();
-  const path = join(root, "data", file.name);
-  await writeFile(path, buffer);
+  // const bytes = await file.arrayBuffer();
+  // const buffer = Buffer.from(bytes);
 
-  return NextResponse.json({ success: true });
+  // const root = process.cwd();
+  // const path = join(root, "data", file.name);
+  // await writeFile(path, buffer);
+
+  return NextResponse.json(blob);
 }

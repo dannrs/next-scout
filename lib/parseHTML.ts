@@ -3,11 +3,11 @@ import cheerio from "cheerio";
 import fs from "fs";
 import path from "path";
 import { TableData } from "./types";
+import { list } from "@vercel/blob";
 
-export const parseHTML = (fileName: string): TableData[] => {
-  const root = process.cwd()
-  const filePath = path.join(root, "data", fileName);
-  const html = fs.readFileSync(filePath, "utf-8");
+export const parseHTML = async (url: string): Promise<TableData[]> => {
+  const res = await fetch(url)
+  const html = await res.text()
   const $ = cheerio.load(html);
 
   const headers: string[] = [];

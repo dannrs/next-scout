@@ -1,11 +1,13 @@
 import calculateRoleScore from "@/lib/calculateScore";
 import { parseHTML } from "@/lib/parseHTML";
 import { TableData } from "@/lib/types";
+import { list } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const filename = "Untitled.html";
-  const playerData = parseHTML(filename);
+  const { blobs } = await list();
+  const sortedBlobs = blobs.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
+  const playerData = await parseHTML(sortedBlobs[0].url);
   const roleScores = calculateRoleScore(playerData);
   const data: TableData[] = playerData.map((playerData, index) => ({
     Inf: playerData.Inf,
